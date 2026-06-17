@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://considerate-achievement-production-e5f5.up.railway.app/api/:path*"
+    }
+  ]
+}

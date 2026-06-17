@@ -132,12 +132,8 @@ function App() {
     setLoading(true);
 
     try {
-      // 🛠️ මෙන්න මෙතන මචං මම නිවැරදි /api/analyze Endpoint එක දැම්මා
-      const res = await axios.post(
-        "https://considerate-achievement-production-e5f5.up.railway.app/api/analyze",
-        formData
-      );
-
+      // 🛠️ Vercel Proxy එක හරහා ආරක්ෂිතව Backend එකට කතා කරන ලින්ක් එක
+      const res = await axios.post("/api/analyze", formData);
       setResult(res.data);
     } catch (err) {
       console.error(err);
@@ -158,7 +154,7 @@ function App() {
           result.experienceScore,
         ],
         borderRadius: 10,
-        backgroundColor: ["#3b82f6", "#10b981", "#f59e0b"], // Chart එක ලස්සන කරන්න පාටවල් ටිකක් දැම්මා
+        backgroundColor: ["#3b82f6", "#10b981", "#f59e0b"],
       },
     ],
   };
