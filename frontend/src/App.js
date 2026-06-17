@@ -135,7 +135,7 @@ function App() {
 
     try {
       // 🛠️ FIXED: ඔයාගේ සැබෑ Railway Backend Endpoint එක මෙතනට දැම්මා
-      const API_URL = "https://considerate-achievement-production-e5f5.up.railway.app/api/analyze";
+      const API_URL = "https://cv-analyzer-production-3d03.up.railway.app/api/analyze";
       
       const res = await axios.post(API_URL, formData, {
         headers: {
