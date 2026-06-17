@@ -10,17 +10,16 @@ const path = require("path");
 const app = express();
 
 // ========================
-// 🛠️ CORS Setup - Fixed URL to match your live Vercel deployment
+// 🛠️ CORS Setup - Express 5 Compatible
 // ========================
 const allowedOrigins = [
-    'https://cv-analyzer-dkas2o4ex-shanze.vercel.app', // Ube live frontend URL eka
-    'https://cv-analyzer-orcin.vercel.app',           // Parana URL ekath thiyenna arinnara
-    'http://localhost:3000'                           // Local test karanna ona unoth kiyala
+    'https://cv-analyzer-dkas2o4ex-shanze.vercel.app', 
+    'https://cv-analyzer-orcin.vercel.app',           
+    'http://localhost:3000'                           
 ];
 
 app.use(cors({
     origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
         if (allowedOrigins.indexOf(origin) === -1) {
             const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
@@ -30,11 +29,12 @@ app.use(cors({
     },
     methods: ['GET', 'POST', 'OPTIONS'],
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    preflightContinue: false, // ✅ OPTIONS request ආවම කෙලින්ම CORS middleware එකෙන්ම response එක යවනවා
+    optionsSuccessStatus: 204  // ✅ පරණ බ්‍රවුසර් වලටත් සපෝට් කරන්න 204 status එක දෙනවා
 }));
 
-// ✅ FIXED FOR EXPRESS 5: Preflight (OPTIONS) requests වලට ක්‍රෑෂ් නොවී 200 OK එකක් යවන්න (.*) දැම්මා
-app.options('(.*)', cors());
+// ❌ app.options('*') හෝ app.options('(.*)') මෙතන ඕනෙම නැහැ! ක්‍රෑෂ් වෙන ලෙඩේ මුලින්ම ඉවරයි.
 
 app.use(express.json());
 
@@ -66,7 +66,6 @@ const storage = multer.diskStorage({
     }
 });
 
-// Only allow PDF files
 const fileFilter = (req, file, cb) => {
     if (file.mimetype === "application/pdf") {
         cb(null, true);
@@ -106,7 +105,6 @@ app.post("/api/analyze", upload.single("file"), async (req, res) => {
         console.log("✅ PDF parsed successfully");
         console.log("🧾 Characters:", data.text.length);
 
-        // Clean up: Delete uploaded file after parsing to save space on server
         try {
             fs.unlinkSync(filePath);
             console.log("🗑️ Temporary file deleted from server");
@@ -114,9 +112,6 @@ app.post("/api/analyze", upload.single("file"), async (req, res) => {
             console.error("⚠️ Failed to delete temporary file:", err.message);
         }
 
-        // ========================
-        // MOCK AI RESULT
-        // ========================
         const result = {
             success: true,
             atsScore: 88,
