@@ -103,12 +103,12 @@ const downloadPDF = (result) => {
   doc.text(summary, 20, 95);
 
   doc.text("STRENGTHS:", 20, 130);
-  result.strengths.forEach((s, i) => {
+  result.strengths?.forEach((s, i) => {
     doc.text(`- ${s}`, 25, 140 + i * 10);
   });
 
   doc.text("MISSING SKILLS:", 20, 180);
-  result.missingKeywords.forEach((m, i) => {
+  result.missingKeywords?.forEach((m, i) => {
     doc.text(`- ${m}`, 25, 190 + i * 10);
   });
 
@@ -127,17 +127,25 @@ function App() {
     if (!file) return alert("Select CV PDF");
 
     const formData = new FormData();
-    formData.append("cv", file);
+    formData.append("cv", file); // මෙතන 'cv' කියන key එක ඔයාගේ backend එකේ multer එකට දාපු එකම වෙන්න ඕනේ.
 
     setLoading(true);
 
     try {
-      // 🛠️ Vercel Proxy එක හරහා ආරක්ෂිතව Backend එකට කතා කරන ලින්ක් එක
-      const res = await axios.post("/api/analyze", formData);
+      // ⚠️ මෙතන "https://your-backend-production.up.railway.app" වෙනුවට ඔයාගේ ඇත්තම Railway Domain එක දාන්න!
+      const API_URL = "https://your-backend-production.up.railway.app/api/analyze";
+      
+      // Axios POST Request එක හරියටම මෙන්න මේ විදිහට වෙන්න ඕනේ:
+      const res = await axios.post(API_URL, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       setResult(res.data);
     } catch (err) {
-      console.error(err);
-      alert("Server Error: Cannot connect to Backend");
+      console.error("Connection Error:", err);
+      alert("Server Error: Cannot connect to Backend. Check Console!");
     } finally {
       setLoading(false);
     }
@@ -149,9 +157,9 @@ function App() {
       {
         label: "Score",
         data: [
-          result.atsScore,
-          result.skillsScore,
-          result.experienceScore,
+          result.atsScore || 0,
+          result.skillsScore || 0,
+          result.experienceScore || 0,
         ],
         borderRadius: 10,
         backgroundColor: ["#3b82f6", "#10b981", "#f59e0b"],
@@ -225,7 +233,7 @@ function App() {
 
             <motion.div className="card">
               <h3>📊 Analytics</h3>
-              <Bar data={chartData} />
+              {chartData && <Bar data={chartData} />}
             </motion.div>
 
             <motion.div className="card">
