@@ -132,14 +132,16 @@ function App() {
     setLoading(true);
 
     try {
+      // 🛠️ මෙන්න මෙතන මචං මම නිවැරදි /api/analyze Endpoint එක දැම්මා
       const res = await axios.post(
-        "https://considerate-achievement-production-e5f5.up.railway.app",
+        "https://considerate-achievement-production-e5f5.up.railway.app/api/analyze",
         formData
       );
 
       setResult(res.data);
     } catch (err) {
-      alert("Server Error");
+      console.error(err);
+      alert("Server Error: Cannot connect to Backend");
     } finally {
       setLoading(false);
     }
@@ -156,6 +158,7 @@ function App() {
           result.experienceScore,
         ],
         borderRadius: 10,
+        backgroundColor: ["#3b82f6", "#10b981", "#f59e0b"], // Chart එක ලස්සන කරන්න පාටවල් ටිකක් දැම්මා
       },
     ],
   };
@@ -182,7 +185,7 @@ function App() {
             onChange={(e) => setFile(e.target.files[0])}
           />
 
-          <button onClick={handleUpload}>
+          <button onClick={handleUpload} disabled={loading}>
             {loading ? "Analyzing..." : "Analyze 🚀"}
           </button>
         </div>

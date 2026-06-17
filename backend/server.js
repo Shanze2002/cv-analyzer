@@ -9,8 +9,15 @@ const path = require("path");
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// ========================
+// 🛠️ CORS Setup (Vercel URL එක මෙතනට ලින්ක් කරලා තියෙන්නේ)
+// ========================
+app.use(cors({
+    origin: 'https://cv-analyzer-orcin.vercel.app',
+    methods: ['GET', 'POST'],
+    credentials: true
+}));
+
 app.use(express.json());
 
 // ========================
@@ -56,12 +63,11 @@ const upload = multer({
 });
 
 // ========================
-// Upload Route
+// 🚀 Analyze Route (Frontend එකෙන් කතා කරන නිවැරදි Endpoint එක)
 // ========================
-app.post("/upload", upload.single("cv"), async (req, res) => {
+app.post("/api/analyze", upload.single("cv"), async (req, res) => {
 
     try {
-
         console.log("📥 Upload request received");
 
         if (!req.file) {
@@ -74,11 +80,9 @@ app.post("/upload", upload.single("cv"), async (req, res) => {
         console.log("📄 File:", req.file.filename);
 
         const filePath = path.join(__dirname, req.file.path);
-
         const dataBuffer = fs.readFileSync(filePath);
 
         console.log("📖 Reading PDF...");
-
         const data = await pdf(dataBuffer);
 
         console.log("✅ PDF parsed successfully");
@@ -89,42 +93,34 @@ app.post("/upload", upload.single("cv"), async (req, res) => {
         // ========================
         const result = {
             success: true,
-
             atsScore: 88,
             skillsScore: 84,
             experienceScore: 79,
-
             strengths: [
                 "Strong React Skills",
                 "Node.js Knowledge",
                 "Good Project Experience",
                 "Problem Solving Ability"
             ],
-
             missingKeywords: [
                 "Docker",
                 "AWS",
                 "CI/CD",
                 "Kubernetes"
             ],
-
             suggestions: [
                 "Add GitHub project links",
                 "Include certifications",
                 "Mention deployment experience",
                 "Add measurable achievements"
             ],
-
-            summary:
-                "Strong developer profile with good fundamentals. Adding cloud + DevOps skills will improve ATS ranking."
+            summary: "Strong developer profile with good fundamentals. Adding cloud + DevOps skills will improve ATS ranking."
         };
 
         res.status(200).json(result);
 
     } catch (error) {
-
         console.error("❌ ERROR:", error.message);
-
         res.status(500).json({
             success: false,
             error: error.message
@@ -138,5 +134,5 @@ app.post("/upload", upload.single("cv"), async (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
 });
