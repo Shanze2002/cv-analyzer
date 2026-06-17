@@ -33,6 +33,9 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+// 🛠️ FIXED: Preflight (OPTIONS) requests වලට කෙලින්ම 200 OK එකක් යවනවා (CORS Error එක නැති කරන්න)
+app.options('*', cors());
+
 app.use(express.json());
 
 // ========================
@@ -80,7 +83,8 @@ const upload = multer({
 // ========================
 // 🚀 Analyze Route
 // ========================
-app.post("/api/analyze", upload.single("cv"), async (req, res) => {
+// 🛠️ FIXED: Frontend එකෙන් 'file' කියලා එවන නිසා මෙතන upload.single("file") කලා
+app.post("/api/analyze", upload.single("file"), async (req, res) => {
 
     try {
         console.log("📥 Upload request received");

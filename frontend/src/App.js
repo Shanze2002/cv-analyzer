@@ -99,7 +99,7 @@ const downloadPDF = (result) => {
   doc.text("================================", 20, 70);
 
   doc.text("SUMMARY:", 20, 85);
-  const summary = doc.splitTextToSize(result.summary, 170);
+  const summary = doc.splitTextToSize(result.summary || "", 170);
   doc.text(summary, 20, 95);
 
   doc.text("STRENGTHS:", 20, 130);
@@ -127,20 +127,21 @@ function App() {
     if (!file) return alert("Select CV PDF");
 
     const formData = new FormData();
-    formData.append("cv", file); 
+    // 💡 සටහන: Backend එකේ multer වල 'file' කියලා නම් තියෙන්නේ මෙතන "file" වෙන්න ඕනේ. 
+    // වැරදුනොත් "cv" කියලා මාරු කරලා බලන්න.
+    formData.append("file", file); 
 
     setLoading(true);
 
     try {
-      // 🛠️ FIXED: Added your true Railway live URL endpoint
-      const API_URL = "https://cv-analyzer-production.up.railway.app/api/analyze";
+      // 🛠️ FIXED: ඔයාගේ සැබෑ Railway Backend Endpoint එක මෙතනට දැම්මා
+      const API_URL = "https://considerate-achievement-production-e5f5.up.railway.app/api/analyze";
       
-      // Axios POST Request with withCredentials fixed
       const res = await axios.post(API_URL, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-        },
-        withCredentials: true
+        }
+        // 💡 REMOVED withCredentials: CORS issues මඟහරවා ගන්න දැනට මේක ඉවත් කරලා තියෙන්නේ
       });
 
       setResult(res.data);
