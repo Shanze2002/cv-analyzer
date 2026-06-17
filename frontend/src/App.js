@@ -127,19 +127,20 @@ function App() {
     if (!file) return alert("Select CV PDF");
 
     const formData = new FormData();
-    formData.append("cv", file); // මෙතන 'cv' කියන key එක ඔයාගේ backend එකේ multer එකට දාපු එකම වෙන්න ඕනේ.
+    formData.append("cv", file); 
 
     setLoading(true);
 
     try {
-      // ⚠️ මෙතන "https://your-backend-production.up.railway.app" වෙනුවට ඔයාගේ ඇත්තම Railway Domain එක දාන්න!
-      const API_URL = "https://your-backend-production.up.railway.app/api/analyze";
+      // 🛠️ FIXED: Added your true Railway live URL endpoint
+      const API_URL = "https://cv-analyzer-production.up.railway.app/api/analyze";
       
-      // Axios POST Request එක හරියටම මෙන්න මේ විදිහට වෙන්න ඕනේ:
+      // Axios POST Request with withCredentials fixed
       const res = await axios.post(API_URL, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        withCredentials: true
       });
 
       setResult(res.data);
