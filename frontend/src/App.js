@@ -83,10 +83,11 @@ function App() {
       const API_URL = "https://cv-analyzer-production-3d03.up.railway.app/api/analyze";
       
       // ✅ මෙතන withCredentials: true එක අනිවාර්යයි
-      const res = await axios.post(API_URL, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true 
-      });
+      // මේ කොටස මෙහෙම වෙනස් කරන්න
+    const res = await axios.post(API_URL, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+    // withCredentials: true  <-- මේක temporarily comment out කරන්න
+});
 
       setResult(res.data);
     } catch (err) {

@@ -152,8 +152,8 @@ app.post("/api/analyze", upload.single("file"), async (req, res) => {
 // ========================
 // Start Server
 // ========================
-const PORT = process.env.PORT || 5000;
-
+// වෙනස් කරන්න:
+const PORT = process.env.PORT || 8080; // Railway වලට 8080 සාමාන්‍යයි
 app.listen(PORT, "0.0.0.0", () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
